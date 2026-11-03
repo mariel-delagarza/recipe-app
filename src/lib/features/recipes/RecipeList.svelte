@@ -31,7 +31,21 @@
 						{/if}
 					</div>
 
-					<span class="recipe-arrow" aria-hidden="true">→</span>
+					<span class="recipe-arrow" aria-hidden="true">
+						<svg
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2.5"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<path d="M5 12h14" />
+							<path d="m12 5 7 7-7 7" />
+						</svg>
+					</span>
 				</a>
 			{/each}
 		</div>
@@ -111,20 +125,14 @@
 		align-items: center;
 		justify-content: center;
 		flex-shrink: 0;
-		width: 32px;
-		height: 32px;
-		border: 1px solid var(--color-border);
-		border-radius: 50%;
+		width: 24px;
+		height: 24px;
 		color: var(--color-burgundy);
-		font-size: 1.125rem;
-		transition:
-			background-color 150ms ease,
-			color 150ms ease;
+		transition: transform 150ms ease;
 	}
 
 	.recipe:hover .recipe-arrow {
-		background: var(--color-burgundy);
-		color: white;
+		transform: translateX(3px);
 	}
 
 	.empty-state {
