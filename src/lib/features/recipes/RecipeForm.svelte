@@ -6,7 +6,7 @@
 	import { session } from '#lib/state/session.svelte.js';
 	import { createRecipe } from '#lib/services/recipes.js';
 	import IngredientRow from './IngredientRow.svelte';
-  import BackLink from '../components/BackLink.svelte';
+	import BackLink from '../components/BackLink.svelte';
 
 	let { recipe = null } = $props();
 
@@ -162,7 +162,12 @@
 
 			<label>
 				Source URL
-				<input type="url" bind:value={form.sourceUrl} placeholder="https://..." />
+				<input
+					type="url"
+					bind:value={form.sourceUrl}
+					placeholder="https://..."
+					class="source-url-input"
+				/>
 			</label>
 		</div>
 	</section>
@@ -323,10 +328,14 @@
 		outline-offset: 2px;
 	}
 
+	.source-url-input {
+		text-overflow: ellipsis;
+	}
+
 	.details-grid {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr);
-		gap: var(--space-4);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: var(--space-3);
 	}
 
 	.ingredient-list {
@@ -410,10 +419,6 @@
 	}
 
 	@media (min-width: 700px) {
-		.details-grid {
-			grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
-		}
-
 		.save-button {
 			width: auto;
 			min-width: 200px;
