@@ -149,7 +149,7 @@
 		align-items: center;
 		gap: var(--space-2);
 		color: var(--color-burgundy);
-		font-size: 0.875rem;
+		font-size: 1rem;
 		font-weight: 600;
 		text-decoration: none;
 	}
@@ -191,12 +191,12 @@
 		gap: var(--space-2);
 		margin: 0;
 		color: var(--color-text-muted);
-		font-size: 0.875rem;
+		font-size: 1rem;
 	}
 
 	.yield-label {
 		color: var(--color-olive);
-		font-size: 0.6875rem;
+		font-size: 0.75rem;
 		font-weight: 700;
 		letter-spacing: 0.1em;
 		text-transform: uppercase;
@@ -215,7 +215,7 @@
 	.recipe-section h2 {
 		margin: 0;
 		font-family: var(--font-display);
-		font-size: 1.5rem;
+		font-size: 1.75rem;
 		font-weight: 400;
 		line-height: 1.3;
 		color: var(--color-text);
@@ -236,9 +236,9 @@
 		display: flex;
 		align-items: baseline;
 		gap: var(--space-3);
-		padding: var(--space-1) 0;
-		font-size: 0.9375rem;
-		line-height: 1.6;
+		padding: var(--space-2) 0;
+		font-size: 1.125rem; /* 18px */
+		line-height: 1.7;
 	}
 
 	.ingredient-marker {
@@ -292,12 +292,12 @@
 		align-items: center;
 		justify-content: center;
 		flex-shrink: 0;
-		width: 32px;
-		height: 32px;
+		width: 38px;
+		height: 38px;
 		border-radius: 50%;
 		background: var(--color-sage);
 		color: var(--color-olive);
-		font-size: 0.875rem;
+		font-size: 1rem;
 		font-weight: 600;
 	}
 
@@ -305,10 +305,10 @@
 		flex: 1;
 		min-width: 0;
 		margin: 0;
-		padding-top: 3px;
+		padding-top: 2px;
 		white-space: pre-line;
-		font-size: 0.9375rem;
-		line-height: 1.75;
+		font-size: 1.1875rem; /* 19px */
+		line-height: 1.7;
 		color: var(--color-text);
 	}
 
