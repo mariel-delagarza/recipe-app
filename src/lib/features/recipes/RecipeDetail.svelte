@@ -35,9 +35,9 @@
 						</span>
 					{/if}
 
-					{#if ingredient.measurement_units}
+					{#if ingredient.measurement_units?.dimension !== 'count'}
 						<span class="unit">
-							{ingredient.measurement_units.abbreviation}
+							{ingredient.measurement_units?.abbreviation}
 						</span>
 					{/if}
 
