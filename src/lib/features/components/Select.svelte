@@ -347,4 +347,13 @@
 		font-size: 0.875rem;
 		text-align: center;
 	}
+
+	@media (max-width: 699px) {
+		.select-menu {
+			left: auto;
+			right: 0;
+			width: max(100%, 260px);
+			max-width: calc(100vw - 2rem);
+		}
+	}
 </style>
