@@ -104,7 +104,7 @@
 		onkeydown={handleTriggerKeydown}
 		bind:this={trigger}
 	>
-		<span class:placeholder={!selectedOption}>
+		<span class:placeholder={!selectedOption || value === ''}>
 			{selectedOption?.label ?? placeholder}
 		</span>
 
@@ -227,6 +227,7 @@
 
 	.select-trigger .placeholder {
 		color: var(--color-text-muted);
+		opacity: 0.75;
 	}
 
 	.select-trigger svg {
