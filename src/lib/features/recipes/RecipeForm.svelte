@@ -241,21 +241,6 @@
 		gap: var(--space-4);
 	}
 
-	.back-link {
-		display: inline-flex;
-		align-items: center;
-		gap: var(--space-2);
-		align-self: flex-start;
-		color: var(--color-burgundy);
-		font-size: 0.875rem;
-		font-weight: 500;
-		text-decoration: none;
-	}
-
-	.back-link:hover {
-		text-decoration: underline;
-	}
-
 	h1,
 	h2 {
 		font-family: var(--font-display);
