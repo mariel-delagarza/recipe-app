@@ -16,7 +16,18 @@
 
 		<label>
 			Quantity
-			<input type="number" min="0.01" step="any" bind:value={ingredient.quantity} placeholder="2" />
+			<input
+				type="number"
+				min="0.01"
+				step="any"
+				value={ingredient.quantity ?? ''}
+				oninput={(event) => {
+					const value = event.currentTarget.value;
+
+					ingredient.quantity = value === '' ? null : Number(value);
+				}}
+				placeholder="2"
+			/>
 		</label>
 
 		<label>

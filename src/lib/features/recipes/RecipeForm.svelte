@@ -75,6 +75,7 @@
 			preparation: ingredient.preparation.trim()
 		}));
 
+		console.log('Ingredients before save:', $state.snapshot(preparedIngredients));
 		saving = true;
 
 		try {
