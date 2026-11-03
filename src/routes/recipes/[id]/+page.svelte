@@ -2,8 +2,6 @@
 <script>
     import { onMount } from 'svelte';
     import { page } from '$app/state';
-    import { resolve } from '$app/paths';
-
     import { session } from '#lib/state/session.svelte.js';
     import { getRecipe } from '#lib/services/recipes.js';
     import RecipeDetail from '#lib/features/recipes/RecipeDetail.svelte';
@@ -27,10 +25,6 @@
 </script>
 
 <main>
-    <nav>
-        <a href={resolve('/recipes')}>Back to recipes</a>
-    </nav>
-
     {#if loading}
         <p>Loading recipe...</p>
     {:else if errorMessage}

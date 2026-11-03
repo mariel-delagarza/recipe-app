@@ -1,4 +1,5 @@
 <script>
+	import { resolve } from '$app/paths';
 	let { recipe } = $props();
 
 	function formatQuantity(quantity) {
@@ -18,6 +19,25 @@
 </script>
 
 <article class="recipe-detail">
+	<nav class="recipe-actions" aria-label="Recipe navigation">
+		<a href={resolve('/recipes')} class="back-link">
+			<svg
+				width="16"
+				height="16"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				aria-hidden="true"
+			>
+				<path d="m12 19-7-7 7-7" />
+				<path d="M19 12H5" />
+			</svg>
+			All recipes
+		</a>
+	</nav>
 	<header class="recipe-header">
 		<h1>{recipe.title}</h1>
 
@@ -27,20 +47,14 @@
 
 		{#if recipe.yield_description}
 			<p class="yield">
-				<span class="yield-label">Yield</span>
+				<span class="yield-label">Yield:</span>
 				{recipe.yield_description}
 			</p>
 		{/if}
 	</header>
 
 	<section class="recipe-section">
-		<div class="section-heading">
-			<h2>Ingredients</h2>
-			<span class="section-count">
-				{recipe.recipe_ingredients.length}
-				{recipe.recipe_ingredients.length === 1 ? 'ingredient' : 'ingredients'}
-			</span>
-		</div>
+		<h2>Ingredients</h2>
 
 		<ul class="ingredients">
 			{#each recipe.recipe_ingredients as ingredient (ingredient.id)}
@@ -117,7 +131,7 @@
 	.recipe-detail {
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-7);
+		gap: var(--space-6);
 		width: 100%;
 		max-width: 760px;
 	}
@@ -166,36 +180,30 @@
 		text-transform: uppercase;
 	}
 
+	/* Navigation */
+
+	.recipe-actions {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.back-link {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
+		color: var(--color-burgundy);
+		font-size: 0.875rem;
+		font-weight: 600;
+		text-decoration: none;
+	}
+
 	/* Sections */
 
 	.recipe-section {
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-4);
-	}
-
-	.section-heading {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: var(--space-3);
-		padding-bottom: var(--space-3);
-		border-bottom: 1px solid var(--color-border);
-	}
-
-	.section-heading h2 {
-		margin: 0;
-		font-family: var(--font-display);
-		font-size: clamp(1.5rem, 4vw, 1.875rem);
-		font-weight: 400;
-		line-height: 1.3;
-		color: var(--color-text);
-	}
-
-	.section-count {
-		flex-shrink: 0;
-		color: var(--color-text-muted);
-		font-size: 0.75rem;
 	}
 
 	/* Ingredients */
@@ -216,10 +224,6 @@
 		padding: var(--space-3) 0;
 		font-size: 0.9375rem;
 		line-height: 1.6;
-	}
-
-	.ingredients li + li {
-		border-top: 1px solid var(--color-border);
 	}
 
 	.ingredient-marker {
