@@ -1,5 +1,12 @@
 <script>
-	let { ingredient, units = [], onRemove } = $props();
+	let { ingredient, units = [], onUpdate, onRemove } = $props();
+
+	function updateField(field, value) {
+		onUpdate({
+			...ingredient,
+			[field]: value
+		});
+	}
 </script>
 
 <div class="ingredient-row">
@@ -8,7 +15,8 @@
 			Ingredient
 			<input
 				type="text"
-				bind:value={ingredient.name}
+				value={ingredient.name}
+				oninput={(event) => updateField('name', event.currentTarget.value)}
 				placeholder="e.g. All-purpose flour"
 				required
 			/>
@@ -23,28 +31,32 @@
 				value={ingredient.quantity ?? ''}
 				oninput={(event) => {
 					const value = event.currentTarget.value;
-
-					ingredient.quantity = value === '' ? null : Number(value);
+					updateField('quantity', value === '' ? null : Number(value));
 				}}
-				placeholder="2"
 			/>
 		</label>
 
 		<label>
 			Unit
-			<select bind:value={ingredient.unitId}>
+			<select
+				value={ingredient.unitId}
+				onchange={(event) => updateField('unitId', event.currentTarget.value)}
+			>
 				<option value="">No unit</option>
 				{#each units as unit (unit.id)}
-					<option value={unit.id}>
-						{unit.name}
-					</option>
+					<option value={unit.id}>{unit.name}</option>
 				{/each}
 			</select>
 		</label>
 
 		<label>
 			Preparation
-			<input type="text" bind:value={ingredient.preparation} placeholder="e.g. finely chopped" />
+			<input
+				type="text"
+				value={ingredient.preparation}
+				oninput={(event) => updateField('preparation', event.currentTarget.value)}
+				placeholder="e.g. finely chopped"
+			/>
 		</label>
 	</div>
 

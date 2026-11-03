@@ -38,6 +38,14 @@
 		ingredients = ingredients.filter((ingredient) => ingredient.id !== id);
 	}
 
+	function updateIngredient(updatedIngredient) {
+		console.log('Ingredient update received:', updatedIngredient);
+
+		ingredients = ingredients.map((ingredient) =>
+			ingredient.id === updatedIngredient.id ? updatedIngredient : ingredient
+		);
+	}
+
 	onMount(async () => {
 		const { data, error } = await supabase
 			.from('measurement_units')
@@ -125,7 +133,12 @@
 		<legend>Ingredients</legend>
 
 		{#each ingredients as ingredient (ingredient.id)}
-			<IngredientRow {ingredient} {units} onRemove={() => removeIngredient(ingredient.id)} />
+			<IngredientRow
+				{ingredient}
+				{units}
+				onUpdate={updateIngredient}
+				onRemove={() => removeIngredient(ingredient.id)}
+			/>
 		{/each}
 
 		<button type="button" onclick={addIngredient}> + Add ingredient </button>
