@@ -1,6 +1,14 @@
 <script>
 	import { resolve } from '$app/paths';
+
 	let { recipe } = $props();
+
+	let instructionSteps = $derived(
+		(recipe.instructions ?? '')
+			.split(/\n\s*\n/)
+			.map((step) => step.trim())
+			.filter(Boolean)
+	);
 
 	function formatQuantity(quantity) {
 		if (quantity == null) return '';
@@ -9,16 +17,10 @@
 			maximumFractionDigits: 3
 		});
 	}
-
-	let instructionSteps = $derived(
-		(recipe.instructions ?? '')
-			.split(/\n\s*\n/)
-			.map((step) => step.trim())
-			.filter(Boolean)
-	);
 </script>
 
 <article class="recipe-detail">
+	<!-- Navigation -->
 	<nav class="recipe-actions" aria-label="Recipe navigation">
 		<a href={resolve('/recipes')} class="back-link">
 			<svg
@@ -38,6 +40,8 @@
 			All recipes
 		</a>
 	</nav>
+
+	<!-- Recipe header -->
 	<header class="recipe-header">
 		<h1>{recipe.title}</h1>
 
@@ -53,13 +57,41 @@
 		{/if}
 	</header>
 
+	<!-- Shopping list action -->
+	<div class="recipe-shopping-action">
+		<button class="shopping-button" disabled>
+			<svg
+				width="20"
+				height="20"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="1.8"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				aria-hidden="true"
+			>
+				<path d="m3 9 2 11h14l2-11H3Z" />
+				<path d="m9 9 3-6 3 6" />
+				<path d="M9 13v4" />
+				<path d="M15 13v4" />
+			</svg>
+			Add to shopping list
+		</button>
+	</div>
+
+	<!-- Ingredients -->
 	<section class="recipe-section">
 		<h2>Ingredients</h2>
 
 		<ul class="ingredients">
 			{#each recipe.recipe_ingredients as ingredient (ingredient.id)}
 				<li>
-					<span class="ingredient-marker" aria-hidden="true"></span>
+					<input
+						type="checkbox"
+						class="ingredient-checkbox"
+						aria-label={`Mark ${ingredient.ingredient_text} as used`}
+					/>
 
 					<span class="ingredient-content">
 						{#if ingredient.quantity != null}
@@ -79,7 +111,9 @@
 						</span>
 
 						{#if ingredient.preparation}
-							<span class="preparation">, {ingredient.preparation}</span>
+							<span class="preparation">
+								, {ingredient.preparation}
+							</span>
 						{/if}
 					</span>
 				</li>
@@ -87,6 +121,7 @@
 		</ul>
 	</section>
 
+	<!-- Instructions -->
 	{#if instructionSteps.length > 0}
 		<section class="recipe-section">
 			<h2>Instructions</h2>
@@ -105,16 +140,15 @@
 		</section>
 	{/if}
 
+	<!-- Notes -->
 	{#if recipe.notes}
 		<section class="recipe-section">
-			<div class="section-heading">
-				<h2>Notes</h2>
-			</div>
-
+			<h2>Notes</h2>
 			<p class="notes">{recipe.notes}</p>
 		</section>
 	{/if}
 
+	<!-- Original source -->
 	{#if recipe.source_url}
 		<footer class="recipe-footer">
 			<!-- eslint-disable svelte/no-navigation-without-resolve -->
@@ -149,7 +183,7 @@
 		align-items: center;
 		gap: var(--space-2);
 		color: var(--color-burgundy);
-		font-size: 1rem;
+		font-size: 0.875rem;
 		font-weight: 600;
 		text-decoration: none;
 	}
@@ -202,6 +236,35 @@
 		text-transform: uppercase;
 	}
 
+	/* Shopping list action */
+
+	.recipe-shopping-action {
+		display: flex;
+	}
+
+	.shopping-button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--space-2);
+		width: 100%;
+		min-height: 44px;
+		padding: var(--space-2) var(--space-4);
+		border: none;
+		border-radius: var(--radius-lg);
+		background: #eeede5;
+		color: var(--color-text-muted);
+		font-family: var(--font-body);
+		font-size: 0.9375rem;
+		font-weight: 500;
+		cursor: pointer;
+	}
+
+	.shopping-button:disabled {
+		opacity: 1;
+		cursor: not-allowed;
+	}
+
 	/* Sections */
 
 	.recipe-section {
@@ -234,20 +297,49 @@
 
 	.ingredients li {
 		display: flex;
-		align-items: baseline;
+		align-items: center;
 		gap: var(--space-3);
 		padding: var(--space-2) 0;
-		font-size: 1.125rem; /* 18px */
+		font-size: 1.125rem;
 		line-height: 1.7;
 	}
 
-	.ingredient-marker {
-		flex-shrink: 0;
-		width: 6px;
-		height: 6px;
-		margin-top: 0.55em;
-		border-radius: 50%;
+	.ingredient-checkbox {
+		appearance: none;
+		box-sizing: border-box;
+		display: block;
+		flex: 0 0 22px;
+		width: 22px;
+		height: 22px;
+		min-width: 22px;
+		min-height: 0;
+		max-width: 22px;
+		max-height: 22px;
+		margin: 0;
+		padding: 0;
+		border: 1.5px solid var(--color-border);
+		border-radius: var(--radius-sm);
+		background: var(--color-surface);
+		cursor: pointer;
+	}
+
+	.ingredient-checkbox:checked {
 		background: var(--color-olive);
+		border-color: var(--color-olive);
+	}
+
+	.ingredient-checkbox:checked::after {
+		content: '✓';
+		display: block;
+		color: white;
+		font-size: 16px;
+		line-height: 19px;
+		text-align: center;
+	}
+
+	.ingredient-checkbox:focus-visible {
+		outline: 2px solid var(--color-burgundy);
+		outline-offset: 3px;
 	}
 
 	.ingredient-content {
@@ -255,9 +347,13 @@
 		min-width: 0;
 	}
 
-	.quantity,
-	.unit {
+	.quantity {
 		font-weight: 600;
+		color: var(--color-text);
+	}
+
+	.unit {
+		font-weight: 400;
 		color: var(--color-text);
 	}
 
@@ -307,7 +403,7 @@
 		margin: 0;
 		padding-top: 2px;
 		white-space: pre-line;
-		font-size: 1.1875rem; /* 19px */
+		font-size: 1.1875rem;
 		line-height: 1.7;
 		color: var(--color-text);
 	}
