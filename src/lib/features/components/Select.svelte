@@ -243,15 +243,15 @@
 	.select-menu {
 		position: absolute;
 		z-index: 20;
-		top: calc(100% + 4px);
+		top: calc(100% + 6px);
 		left: 0;
-		width: 100%;
-		min-width: 200px;
+		width: max(100%, 260px);
+		max-width: min(340px, calc(100vw - 2rem));
 		padding: var(--space-2);
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);
 		background: var(--color-surface);
-		box-shadow: 0 8px 24px rgb(48 41 35 / 12%);
+		box-shadow: 0 10px 30px rgb(48 41 35 / 10%);
 	}
 
 	.search-wrapper {
@@ -286,9 +286,24 @@
 	}
 
 	.options-list {
-		max-height: 240px;
+		max-height: 220px;
 		overflow-y: auto;
 		overscroll-behavior: contain;
+		scrollbar-width: thin;
+		scrollbar-color: var(--color-border) transparent;
+	}
+
+	.options-list::-webkit-scrollbar {
+		width: 5px;
+	}
+
+	.options-list::-webkit-scrollbar-thumb {
+		background: var(--color-border);
+		border-radius: 10px;
+	}
+
+	.options-list::-webkit-scrollbar-track {
+		background: transparent;
 	}
 
 	.option {
@@ -298,13 +313,14 @@
 		gap: var(--space-2);
 		width: 100%;
 		min-height: 44px;
-		padding: var(--space-2) var(--space-3);
+		padding: 0.625rem 0.75rem;
 		border: 0;
 		border-radius: var(--radius-sm);
 		background: transparent;
 		color: var(--color-text);
 		font: inherit;
 		font-size: 0.9375rem;
+		font-weight: 400;
 		text-align: left;
 		cursor: pointer;
 	}
@@ -316,7 +332,7 @@
 
 	.option[aria-selected='true'] {
 		color: var(--color-olive);
-		font-weight: 600;
+		font-weight: 500;
 	}
 
 	.option svg {
