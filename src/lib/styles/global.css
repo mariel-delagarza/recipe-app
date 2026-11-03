@@ -4,8 +4,10 @@
 	/* Colors */
 	--color-cream: #faf6ef;
 	--color-oat: #f0e5d9;
-	--color-burgundy: #722f42;
-	--color-burgundy-dark: #572333;
+	/* --color-burgundy: #722f42;
+	--color-burgundy-dark: #572333; */
+  --color-burgundy: #500000;
+--color-burgundy-dark: #350000;
 	--color-clay: #a67c69;
 	--color-espresso: #302923;
 	--color-olive: #687747;

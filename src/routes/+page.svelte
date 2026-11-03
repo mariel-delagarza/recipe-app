@@ -255,41 +255,6 @@
 		font-weight: 500;
 	}
 
-	/* Account */
-
-	.account-footer {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		justify-content: space-between;
-		gap: var(--space-3);
-		padding-top: var(--space-4);
-		border-top: 1px solid var(--color-border);
-	}
-
-	.account-email {
-		min-width: 0;
-		overflow-wrap: anywhere;
-		color: var(--color-text-muted);
-		font-size: 0.8125rem;
-	}
-
-	.sign-out {
-		width: auto;
-		min-height: 44px;
-		padding: 0 var(--space-3);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-sm);
-		background: transparent;
-		color: var(--color-burgundy);
-		font-size: 0.8125rem;
-		font-weight: 600;
-	}
-
-	.sign-out:hover {
-		background: var(--color-oat);
-	}
-
 	/* Desktop */
 
 	@media (min-width: 700px) {

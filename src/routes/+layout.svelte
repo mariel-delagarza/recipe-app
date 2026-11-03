@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
-	import { session, initializeSession, signIn, signOut } from '#lib/state/session.svelte.js';
+	import { session, initializeSession, signIn } from '#lib/state/session.svelte.js';
 	import '#lib/styles/global.css';
 
 	let { children } = $props();
@@ -117,8 +117,7 @@
 
 			<div class="sidebar-footer">
 				<span>Made for our table.</span>
-
-				<button class="sidebar-sign-out" onclick={signOut}> Sign out </button>
+				<a href={resolve('/settings')}> Settings </a>
 			</div>
 		</aside>
 
@@ -126,7 +125,14 @@
 			<header class="mobile-header">
 				<a href={resolve('/')} class="mobile-brand"> Our Kitchen </a>
 
-				<button class="header-sign-out" onclick={signOut}> Sign out </button>
+				<a
+					href={resolve('/settings')}
+					class="header-settings"
+					aria-label="Settings"
+					title="Settings"
+				>
+					<span class="settings-icon" aria-hidden="true"></span>
+				</a>
 			</header>
 
 			<main class="page-content">
@@ -266,20 +272,19 @@
 		text-decoration: none;
 	}
 
-	.header-sign-out {
+	.header-settings {
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		flex-shrink: 0;
-		width: auto;
-		min-height: 44px;
-		padding: 0 var(--space-3);
-		border: 1px solid var(--color-border);
+		width: 44px;
+		height: 44px;
 		border-radius: var(--radius-sm);
-		background: transparent;
 		color: var(--color-burgundy);
-		font-size: 0.8125rem;
-		font-weight: 600;
+		text-decoration: none;
 	}
 
-	.header-sign-out:hover {
+	.header-settings:hover {
 		background: var(--color-oat);
 	}
 
@@ -334,6 +339,15 @@
 
 	.bottom-nav .nav-disabled {
 		opacity: 0.4;
+	}
+
+	.settings-icon {
+		display: block;
+		width: 22px;
+		height: 22px;
+		background-color: currentColor;
+
+		mask: url('/images/gear-svgrepo-com.svg') center / contain no-repeat;
 	}
 
 	/* Desktop */
@@ -433,21 +447,6 @@
 			font-size: 0.9375rem;
 			font-style: italic;
 			color: #e1bfbf;
-		}
-
-		.sidebar-sign-out {
-			min-height: 44px;
-			padding: 0 var(--space-3);
-			border: 1px solid rgb(255 255 255 / 35%);
-			border-radius: var(--radius-sm);
-			background: transparent;
-			color: var(--color-cream);
-			font-size: 0.8125rem;
-			font-weight: 600;
-		}
-
-		.sidebar-sign-out:hover {
-			background: rgb(255 255 255 / 10%);
 		}
 
 		/* Hide mobile navigation on desktop */
