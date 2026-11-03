@@ -8,6 +8,13 @@
 			maximumFractionDigits: 3
 		});
 	}
+
+	let instructionSteps = $derived(
+		(recipe.instructions ?? '')
+			.split(/\n\s*\n/)
+			.map((step) => step.trim())
+			.filter(Boolean)
+	);
 </script>
 
 <article class="recipe-detail">
@@ -66,13 +73,21 @@
 		</ul>
 	</section>
 
-	{#if recipe.instructions}
+	{#if instructionSteps.length > 0}
 		<section class="recipe-section">
-			<div class="section-heading">
-				<h2>Instructions</h2>
-			</div>
+			<h2>Instructions</h2>
 
-			<div class="instructions">{recipe.instructions}</div>
+			<ol class="instruction-list">
+				{#each instructionSteps as step, index (index)}
+					<li>
+						<span class="step-number" aria-hidden="true">
+							{index + 1}
+						</span>
+
+						<p class="step-text">{step}</p>
+					</li>
+				{/each}
+			</ol>
 		</section>
 	{/if}
 
@@ -237,11 +252,44 @@
 	}
 
 	/* Instructions */
+	.instruction-list {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-5);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		counter-reset: none;
+	}
 
-	.instructions {
+	.instruction-list li {
+		display: flex;
+		align-items: flex-start;
+		gap: var(--space-3);
+	}
+
+	.step-number {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+		background: var(--color-sage);
+		color: var(--color-olive);
+		font-size: 0.875rem;
+		font-weight: 600;
+	}
+
+	.step-text {
+		flex: 1;
+		min-width: 0;
+		margin: 0;
+		padding-top: 3px;
 		white-space: pre-line;
 		font-size: 0.9375rem;
-		line-height: 1.85;
+		line-height: 1.75;
 		color: var(--color-text);
 	}
 
