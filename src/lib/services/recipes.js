@@ -57,6 +57,7 @@ export async function getRecipe(recipeId, householdId) {
                 preparation,
                 sort_order,
                 measurement_units (
+                    id,
                     name,
                     abbreviation,
                     dimension
