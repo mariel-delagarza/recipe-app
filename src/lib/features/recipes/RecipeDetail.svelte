@@ -1,5 +1,5 @@
 <script>
-	import { resolve } from '$app/paths';
+	import BackLink from '../components/BackLink.svelte';
 
 	let { recipe } = $props();
 
@@ -22,23 +22,7 @@
 <article class="recipe-detail">
 	<!-- Navigation -->
 	<nav class="recipe-actions" aria-label="Recipe navigation">
-		<a href={resolve('/recipes')} class="back-link">
-			<svg
-				width="16"
-				height="16"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				aria-hidden="true"
-			>
-				<path d="m12 19-7-7 7-7" />
-				<path d="M19 12H5" />
-			</svg>
-			All recipes
-		</a>
+		<BackLink href="/recipes" />
 	</nav>
 
 	<!-- Recipe header -->
@@ -178,20 +162,6 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-	}
-
-	.back-link {
-		display: inline-flex;
-		align-items: center;
-		gap: var(--space-2);
-		color: var(--color-burgundy);
-		font-size: 0.875rem;
-		font-weight: 600;
-		text-decoration: none;
-	}
-
-	.back-link:hover {
-		text-decoration: underline;
 	}
 
 	/* Recipe header */

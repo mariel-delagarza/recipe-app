@@ -183,7 +183,7 @@
     input:focus-visible,
     select:focus-visible,
     .remove-button:focus-visible {
-        outline: 2px solid var(--color-burgundy);
+        outline: 2px solid var(--color-olive);
         outline-offset: 2px;
     }
 
