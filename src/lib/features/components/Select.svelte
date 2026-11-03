@@ -14,7 +14,7 @@
 	let search = $state('');
 	let activeIndex = $state(0);
 	let container;
-	let searchInput;
+	let searchInput = $state(null);
 	let trigger;
 
 	let selectedOption = $derived(options.find((option) => option.value === value));
@@ -125,7 +125,7 @@
 	</button>
 
 	{#if open}
-		<div class="select-menu" role="listbox" onkeydown={handleMenuKeydown}>
+		<div class="select-menu" role="listbox" tabindex="-1" onkeydown={handleMenuKeydown}>
 			{#if searchable}
 				<div class="search-wrapper">
 					<svg
