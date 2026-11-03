@@ -1,5 +1,4 @@
 <script>
-	import { session, signOut } from '#lib/state/session.svelte.js';
 	import { resolve } from '$app/paths';
 </script>
 
@@ -97,11 +96,6 @@
 			</div>
 		</div>
 	</section>
-
-	<footer class="account-footer">
-		<span class="account-email">{session.user?.email}</span>
-		<button class="sign-out" onclick={signOut}> Sign out </button>
-	</footer>
 </div>
 
 <style>
