@@ -1,4 +1,6 @@
 <script>
+	import Select from '../components/Select.svelte';
+
 	let { ingredient, units = [], number, onUpdate, onRemove } = $props();
 
 	function updateField(field, value) {
@@ -66,19 +68,23 @@
 			/>
 		</label>
 
-		<label class="unit-field">
-			Unit
-			<select
-				value={ingredient.unitId}
-				onchange={(event) => updateField('unitId', event.currentTarget.value)}
-			>
-				<option value="">No unit</option>
+		<div class="unit-field">
+			<span class="field-label">Unit</span>
 
-				{#each units as unit (unit.id)}
-					<option value={unit.id}>{unit.name}</option>
-				{/each}
-			</select>
-		</label>
+			<Select
+				options={[
+					{ value: '', label: 'No unit' },
+					...units.map((unit) => ({
+						value: unit.id,
+						label: unit.name
+					}))
+				]}
+				value={ingredient.unitId}
+				searchable
+				searchPlaceholder="Search units..."
+				onChange={(value) => updateField('unitId', value)}
+			/>
+		</div>
 
 		<label class="preparation-field">
 			Preparation
@@ -166,8 +172,20 @@
 		grid-column: 1 / -1;
 	}
 
-	input,
-	select {
+	.unit-field {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		min-width: 0;
+	}
+
+	.field-label {
+		color: var(--color-text);
+		font-size: 0.95rem;
+		font-weight: 600;
+	}
+
+	input {
 		display: block;
 		width: 100%;
 		min-width: 0;
@@ -189,7 +207,6 @@
 	}
 
 	input:focus-visible,
-	select:focus-visible,
 	.remove-button:focus-visible {
 		outline: 2px solid var(--color-olive);
 		outline-offset: 2px;
