@@ -87,35 +87,37 @@
 		<ul class="ingredients">
 			{#each recipe.recipe_ingredients as ingredient (ingredient.id)}
 				<li>
-					<input
-						type="checkbox"
-						class="ingredient-checkbox"
-						aria-label={`Mark ${ingredient.ingredient_text} as used`}
-					/>
+					<label class="ingredient-label">
+						<input
+							type="checkbox"
+							class="ingredient-checkbox"
+							aria-label={`Mark ${ingredient.ingredient_text} as used`}
+						/>
 
-					<span class="ingredient-content">
-						{#if ingredient.quantity != null}
-							<span class="quantity">
-								{formatQuantity(ingredient.quantity)}
+						<span class="ingredient-content">
+							{#if ingredient.quantity != null}
+								<span class="quantity">
+									{formatQuantity(ingredient.quantity)}
+								</span>
+							{/if}
+
+							{#if ingredient.measurement_units?.dimension !== 'count'}
+								<span class="unit">
+									{ingredient.measurement_units?.abbreviation}
+								</span>
+							{/if}
+
+							<span class="ingredient-name">
+								{ingredient.ingredient_text}
 							</span>
-						{/if}
 
-						{#if ingredient.measurement_units?.dimension !== 'count'}
-							<span class="unit">
-								{ingredient.measurement_units?.abbreviation}
-							</span>
-						{/if}
-
-						<span class="ingredient-name">
-							{ingredient.ingredient_text}
+							{#if ingredient.preparation}
+								<span class="preparation">
+									, {ingredient.preparation}
+								</span>
+							{/if}
 						</span>
-
-						{#if ingredient.preparation}
-							<span class="preparation">
-								, {ingredient.preparation}
-							</span>
-						{/if}
-					</span>
+					</label>
 				</li>
 			{/each}
 		</ul>
@@ -294,12 +296,18 @@
 		padding: 0;
 		list-style: none;
 	}
-
 	.ingredients li {
+		padding: 0;
+	}
+
+	.ingredient-label {
 		display: flex;
 		align-items: center;
 		gap: var(--space-3);
+		width: 100%;
+		min-height: 48px;
 		padding: var(--space-2) 0;
+		cursor: pointer;
 		font-size: 1.125rem;
 		line-height: 1.7;
 	}
