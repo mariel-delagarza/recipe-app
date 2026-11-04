@@ -124,8 +124,8 @@
 
 	.ingredient-number {
 		font-size: var(--font-size-caption);
-		font-weight: 600;
-		letter-spacing: 0.075em;
+		font-weight: 500;
+		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		color: var(--color-text-muted);
 	}

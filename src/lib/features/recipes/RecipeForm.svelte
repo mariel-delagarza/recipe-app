@@ -197,7 +197,7 @@
 		<h2>Instructions</h2>
 
 		<label>
-			<span class="field-hint"> Write each step as a separate paragraph. </span>
+			<p class="field-hint">Write each step as a separate paragraph.</p>
 			<textarea
 				bind:value={form.instructions}
 				rows="6"
@@ -207,6 +207,7 @@
 
 	<section class="form-section notes-section">
 		<h2>Notes</h2>
+		<p class="field-hint">Substitutions, adjustments, or anything worth remembering.</p>
 		<label>
 			<textarea bind:value={form.notes} rows="4" placeholder="Optional notes..."></textarea>
 		</label>
@@ -242,6 +243,10 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-4);
+	}
+
+	.form-header + .recipe-basics {
+		margin-top: calc(-1 * var(--space-3));
 	}
 
 	h1,
