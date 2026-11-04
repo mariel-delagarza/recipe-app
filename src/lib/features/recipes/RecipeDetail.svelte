@@ -1,4 +1,5 @@
 <script>
+	import { resolve } from '$app/paths';
 	import BackLink from '../components/BackLink.svelte';
 
 	let { recipe } = $props();
@@ -23,6 +24,25 @@
 	<!-- Navigation -->
 	<nav class="recipe-actions" aria-label="Recipe navigation">
 		<BackLink href="/recipes" />
+
+		<a class="edit-link" href={resolve('/recipes/[id]/edit', { id: recipe.id })}>
+			<svg
+				width="17"
+				height="17"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="1.8"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				aria-hidden="true"
+			>
+				<path d="M12 20h9" />
+				<path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z" />
+			</svg>
+
+			Edit recipe
+		</a>
 	</nav>
 
 	<!-- Recipe header -->
@@ -419,6 +439,26 @@
 
 	.recipe-footer a:hover {
 		text-decoration: underline;
+	}
+
+	.edit-link {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
+		align-self: flex-start;
+		color: var(--color-burgundy);
+		font-size: 0.875rem;
+		font-weight: 600;
+		text-decoration: none;
+		white-space: nowrap;
+	}
+
+	.edit-link:hover {
+		text-decoration: underline;
+	}
+
+	.edit-link svg {
+		flex-shrink: 0;
 	}
 
 	/* Desktop */
