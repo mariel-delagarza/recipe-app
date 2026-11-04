@@ -78,3 +78,27 @@ export async function getRecipe(recipeId, householdId) {
 		recipe_ingredients: [...data.recipe_ingredients].sort((a, b) => a.sort_order - b.sort_order)
 	};
 }
+
+export async function updateRecipe(recipeId, recipe) {
+	const { data, error } = await supabase.rpc('update_recipe', {
+		p_recipe_id: recipeId,
+		p_title: recipe.title,
+		p_description: recipe.description || null,
+		p_yield_description: recipe.yieldDescription || null,
+		p_instructions: recipe.instructions || '',
+		p_notes: recipe.notes || null,
+		p_source_url: recipe.sourceUrl || null,
+		p_ingredients: recipe.ingredients.map((ingredient) => ({
+			name: ingredient.name,
+			quantity: ingredient.quantity ?? null,
+			unit_id: ingredient.unitId || null,
+			preparation: ingredient.preparation || null
+		}))
+	});
+
+	if (error) {
+		throw error;
+	}
+
+	return data;
+}
