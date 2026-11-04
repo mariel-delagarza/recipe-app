@@ -245,10 +245,6 @@
 		font-weight: 600;
 	}
 
-	.feature-link span {
-		font-size: 1.125rem;
-	}
-
 	.coming-soon {
 		font-size: 0.75rem;
 		font-weight: 500;
