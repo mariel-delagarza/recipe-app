@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap');
 
 :root {
 	/* Colors */
@@ -24,7 +24,7 @@
 
 	/* Typography */
 	--font-display: 'Libre Baskerville', Georgia, serif;
-	--font-body: 'IBM Plex Sans', Arial, sans-serif;
+	--font-body: 'DM Sans', Arial, sans-serif;
 
 	/* Interface typography */
 	--font-size-caption: 0.875rem; /* 14px */
