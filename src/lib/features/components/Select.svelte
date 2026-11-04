@@ -214,6 +214,7 @@
         font-weight: 400;
         text-align: left;
         cursor: pointer;
+        line-height: 1.5;
     }
 
     .select-trigger.open {
