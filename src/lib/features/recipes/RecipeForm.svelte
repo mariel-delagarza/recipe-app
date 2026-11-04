@@ -222,15 +222,9 @@
 	{/if}
 
 	<div class="form-actions">
-		<button class="save-button" type="submit" disabled={saving || loading || isEditing}>
+		<button class="save-button" type="submit" disabled={saving || loading}>
 			{saving ? 'Saving...' : isEditing ? 'Save changes' : 'Save recipe'}
 		</button>
-
-		{#if isEditing}
-			<p class="form-notice">
-				Recipe editing will be available once the database update operation is implemented.
-			</p>
-		{/if}
 	</div>
 </form>
 
@@ -418,13 +412,6 @@
 	.save-button:disabled {
 		opacity: 0.55;
 		cursor: not-allowed;
-	}
-
-	.form-notice {
-		margin: 0;
-		font-size: var(--font-size-small);
-		color: var(--color-text-muted);
-		text-align: center;
 	}
 
 	@media (min-width: 700px) {
