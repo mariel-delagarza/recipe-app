@@ -123,7 +123,7 @@
 	}
 
 	.ingredient-number {
-		font-size: 0.75rem;
+		font-size: var(--font-size-caption);
 		font-weight: 600;
 		letter-spacing: 0.075em;
 		text-transform: uppercase;
@@ -141,8 +141,8 @@
 		border-radius: var(--radius-sm);
 		background: transparent;
 		color: var(--color-burgundy);
-		font: inherit;
-		font-size: 0.875rem;
+		font-family: var(--font-body);
+		font-size: var(--font-size-small);
 		font-weight: 500;
 		cursor: pointer;
 	}
@@ -163,7 +163,7 @@
 		gap: var(--space-2);
 		min-width: 0;
 		color: var(--color-text);
-		font-size: 0.95rem;
+		font-size: var(--font-size-label);
 		font-weight: 600;
 	}
 
@@ -181,7 +181,7 @@
 
 	.field-label {
 		color: var(--color-text);
-		font-size: 0.95rem;
+		font-size: var(--font-size-label);
 		font-weight: 600;
 	}
 
@@ -189,14 +189,15 @@
 		display: block;
 		width: 100%;
 		min-width: 0;
-		min-height: 48px;
+		min-height: var(--control-height);
 		box-sizing: border-box;
-		padding: 0.85rem 1rem;
+		padding: 0.875rem 1rem;
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);
 		background: var(--color-surface);
 		color: var(--color-text);
-		font: inherit;
+		font-family: var(--font-body);
+		font-size: var(--font-size-body);
 		font-weight: 400;
 		line-height: 1.5;
 	}
