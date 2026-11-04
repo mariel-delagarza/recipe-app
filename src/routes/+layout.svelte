@@ -113,11 +113,17 @@
 
 				<span class="nav-placeholder">Shopping list</span>
 				<span class="nav-placeholder">Pantry</span>
+				<a
+					href={resolve('/settings')}
+					class:active={page.url.pathname === '/settings'}
+					aria-current={page.url.pathname === '/settings' ? 'page' : undefined}
+				>
+					Settings
+				</a>
 			</nav>
 
 			<div class="sidebar-footer">
 				<span>Made for our table.</span>
-				<a href={resolve('/settings')}> Settings </a>
 			</div>
 		</aside>
 
@@ -428,6 +434,10 @@
 
 		.sidebar-nav .nav-placeholder {
 			opacity: 0.45;
+		}
+
+		.sidebar-nav a[href='/settings']:not(.active) {
+			color: #e1bfbf;
 		}
 
 		/* Desktop sidebar footer */

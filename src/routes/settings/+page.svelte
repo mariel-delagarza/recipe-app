@@ -1,7 +1,6 @@
 
 <script>
     import { session, signOut } from '#lib/state/session.svelte.js';
-    import { resolve } from '$app/paths';
 </script>
 
 <div class="settings-page">
@@ -31,10 +30,6 @@
             </div>
         </div>
     </section>
-
-    <a class="back-link" href={resolve('/')}>
-        ← Back to kitchen
-    </a>
 </div>
 
 <style>
@@ -88,18 +83,6 @@
 
     .setting-actions {
         padding: var(--space-4);
-    }
-
-    .back-link {
-        align-self: flex-start;
-        color: var(--color-burgundy);
-        font-size: 0.875rem;
-        font-weight: 600;
-        text-decoration: none;
-    }
-
-    .back-link:hover {
-        text-decoration: underline;
     }
 
     @media (min-width: 600px) {
