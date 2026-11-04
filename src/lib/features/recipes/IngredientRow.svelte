@@ -1,0 +1,230 @@
+<script>
+	import Select from '../components/Select.svelte';
+
+	let { ingredient, units = [], number, onUpdate, onRemove } = $props();
+
+	function updateField(field, value) {
+		onUpdate({
+			...ingredient,
+			[field]: value
+		});
+	}
+</script>
+
+<div class="ingredient-row">
+	<div class="ingredient-header">
+		<span class="ingredient-number">Ingredient {number}</span>
+
+		<button
+			class="remove-button"
+			type="button"
+			onclick={onRemove}
+			aria-label={`Remove ingredient ${number}`}
+		>
+			<svg
+				width="16"
+				height="16"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="1.8"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				aria-hidden="true"
+			>
+				<path d="M3 6h18" />
+				<path d="M8 6V4h8v2" />
+				<path d="M5 6l1 14h12l1-14" />
+				<path d="M10 10v7" />
+				<path d="M14 10v7" />
+			</svg>
+			Remove
+		</button>
+	</div>
+
+	<div class="ingredient-fields">
+		<label class="name-field">
+			Ingredient
+			<input
+				type="text"
+				value={ingredient.name}
+				oninput={(event) => updateField('name', event.currentTarget.value)}
+				placeholder="e.g. All-purpose flour"
+				required
+			/>
+		</label>
+
+		<label class="quantity-field">
+			Quantity
+			<input
+				type="number"
+				min="0.01"
+				step="any"
+				value={ingredient.quantity ?? ''}
+				oninput={(event) => {
+					const value = event.currentTarget.value;
+					updateField('quantity', value === '' ? null : Number(value));
+				}}
+			/>
+		</label>
+
+		<div class="unit-field">
+			<span class="field-label">Unit</span>
+
+			<Select
+				options={[
+					{ value: '', label: 'No unit' },
+					...units.map((unit) => ({
+						value: unit.id,
+						label: unit.name
+					}))
+				]}
+				value={ingredient.unitId}
+				searchable
+				searchPlaceholder="Search units..."
+				onChange={(value) => updateField('unitId', value)}
+			/>
+		</div>
+
+		<label class="preparation-field">
+			Preparation
+			<input
+				type="text"
+				value={ingredient.preparation}
+				oninput={(event) => updateField('preparation', event.currentTarget.value)}
+				placeholder="e.g. finely chopped"
+			/>
+		</label>
+	</div>
+</div>
+
+<style>
+	.ingredient-row {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3);
+		padding: var(--space-4) 0;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.ingredient-row:first-child {
+		padding-top: 0;
+	}
+
+	.ingredient-row:last-child {
+		border-bottom: 0;
+	}
+
+	.ingredient-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-3);
+	}
+
+	.ingredient-number {
+		font-size: var(--font-size-caption);
+		font-weight: 500;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		color: var(--color-text-muted);
+	}
+
+	.remove-button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--space-2);
+		min-height: 44px;
+		padding: 0 var(--space-2);
+		border: 0;
+		border-radius: var(--radius-sm);
+		background: transparent;
+		color: var(--color-burgundy);
+		font-family: var(--font-body);
+		font-size: var(--font-size-small);
+		font-weight: 500;
+		cursor: pointer;
+	}
+
+	.remove-button:hover {
+		background: var(--color-surface-muted);
+	}
+
+	.ingredient-fields {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		gap: var(--space-3);
+	}
+
+	label {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		min-width: 0;
+		color: var(--color-text);
+		font-size: var(--font-size-label);
+		font-weight: 600;
+	}
+
+	.name-field,
+	.preparation-field {
+		grid-column: 1 / -1;
+	}
+
+	.unit-field {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		min-width: 0;
+	}
+
+	.field-label {
+		color: var(--color-text);
+		font-size: var(--font-size-label);
+		font-weight: 600;
+	}
+
+	input {
+		display: block;
+		width: 100%;
+		min-width: 0;
+		min-height: var(--control-height);
+		box-sizing: border-box;
+		padding: 0.875rem 1rem;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
+		background: var(--color-surface);
+		color: var(--color-text);
+		font-family: var(--font-body);
+		font-size: var(--font-size-body);
+		font-weight: 400;
+		line-height: 1.5;
+	}
+
+	input::placeholder {
+		color: var(--color-text-muted);
+		opacity: 0.75;
+	}
+
+	input:focus-visible,
+	.remove-button:focus-visible {
+		outline: 2px solid var(--color-olive);
+		outline-offset: 2px;
+	}
+
+	@media (min-width: 850px) {
+		.ingredient-fields {
+			grid-template-columns:
+				minmax(0, 2fr)
+				minmax(85px, 0.8fr)
+				minmax(110px, 1fr)
+				minmax(0, 1.5fr);
+		}
+
+		.name-field,
+		.preparation-field {
+			grid-column: auto;
+		}
+	}
+</style>

@@ -1,16 +1,19 @@
+
 {
-	"extends": "$app/tsconfig",
-	"compilerOptions": {
-		"strict": true,
-		"types": [
-			"$app/types",
-			"node"
-		]
-	},
-	"include": [
-		"src",
-		"vite.config.ts",
-		"prettier.config.js",
-		"eslint.config.js"
-	]
+    "extends": "$app/tsconfig",
+    "compilerOptions": {
+        "strict": true,
+        "allowJs": true,
+        "checkJs": false,
+        "types": [
+            "$app/types",
+            "node"
+        ]
+    },
+    "include": [
+        "src",
+        "vite.config.ts",
+        "prettier.config.js",
+        "eslint.config.js"
+    ]
 }
