@@ -66,7 +66,6 @@
 
 				<span class="feature-link">
 					Browse recipes
-					<span aria-hidden="true">→</span>
 				</span>
 			</a>
 
