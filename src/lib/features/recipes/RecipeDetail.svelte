@@ -1,5 +1,8 @@
 <script>
 	import { resolve } from '$app/paths';
+	import { goto } from '$app/navigation';
+	import { session } from '#lib/state/session.svelte.js';
+	import { deleteRecipe } from '#lib/services/recipes.js';
 	import BackLink from '../components/BackLink.svelte';
 
 	let { recipe } = $props();
@@ -17,6 +20,38 @@
 		return Number(quantity).toLocaleString('en-US', {
 			maximumFractionDigits: 3
 		});
+	}
+
+	let deleting = $state(false);
+	let deleteError = $state('');
+
+	let deleteDialog;
+
+	function handleDelete() {
+		deleteDialog.showModal();
+	}
+
+	async function confirmDelete() {
+		deleteError = '';
+
+		if (!session.household) {
+			deleteError = 'No household is available.';
+			deleteDialog.close();
+			return;
+		}
+
+		deleting = true;
+
+		try {
+			await deleteRecipe(recipe.id, session.household.id);
+			deleteDialog.close();
+			await goto(resolve('/recipes'));
+		} catch (error) {
+			deleteError = error.message;
+			deleteDialog.close();
+		} finally {
+			deleting = false;
+		}
 	}
 </script>
 
@@ -165,6 +200,49 @@
 			<!-- eslint-enable svelte/no-navigation-without-resolve -->
 		</footer>
 	{/if}
+	<div class="delete-action">
+		{#if deleteError}
+			<p class="delete-error" role="alert">{deleteError}</p>
+		{/if}
+
+		<button type="button" class="delete-button" disabled={deleting} onclick={handleDelete}>
+			Delete recipe
+		</button>
+	</div>
+
+	<dialog
+		bind:this={deleteDialog}
+		class="delete-dialog"
+		oncancel={(event) => {
+			if (deleting) event.preventDefault();
+		}}
+	>
+		<h2>Delete this recipe?</h2>
+
+		<p>
+			Are you sure you want to delete <strong>{recipe.title}</strong>? This cannot be undone.
+		</p>
+
+		<div class="dialog-actions">
+			<button
+				type="button"
+				class="cancel-button"
+				disabled={deleting}
+				onclick={() => deleteDialog.close()}
+			>
+				Cancel
+			</button>
+
+			<button
+				type="button"
+				class="confirm-delete-button"
+				disabled={deleting}
+				onclick={confirmDelete}
+			>
+				{deleting ? 'Deleting...' : 'Delete recipe'}
+			</button>
+		</div>
+	</dialog>
 </article>
 
 <style>
@@ -459,6 +537,105 @@
 
 	.edit-link svg {
 		flex-shrink: 0;
+	}
+
+	.delete-action {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--space-3);
+		padding-top: var(--space-5);
+		border-top: 1px solid var(--color-border);
+	}
+
+	.delete-button {
+		min-height: 44px;
+		padding: var(--space-2) var(--space-4);
+		border: 1px solid var(--color-error);
+		border-radius: var(--radius-md);
+		background: transparent;
+		color: var(--color-error);
+		font-family: var(--font-body);
+		font-size: 0.875rem;
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	.delete-button:hover:not(:disabled) {
+		background: var(--color-surface-muted);
+	}
+
+	.delete-button:disabled {
+		opacity: 0.55;
+		cursor: not-allowed;
+	}
+
+	.delete-error {
+		margin: 0;
+		color: var(--color-error);
+		font-size: 0.875rem;
+	}
+
+	.delete-dialog {
+		width: min(90vw, 420px);
+		max-height: 90vh;
+		padding: var(--space-5);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-lg);
+		background: var(--color-surface);
+		color: var(--color-text);
+		box-shadow: 0 16px 48px rgb(0 0 0 / 0.18);
+	}
+
+	.delete-dialog::backdrop {
+		background: rgb(20 10 12 / 0.55);
+	}
+
+	.delete-dialog h2 {
+		margin: 0 0 var(--space-3);
+		font-family: var(--font-display);
+		font-size: 1.75rem;
+		font-weight: 400;
+	}
+
+	.delete-dialog p {
+		margin: 0;
+		line-height: 1.6;
+		color: var(--color-text-muted);
+	}
+
+	.dialog-actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: var(--space-3);
+		margin-top: var(--space-5);
+	}
+
+	.dialog-actions button {
+		min-height: 44px;
+		padding: var(--space-2) var(--space-4);
+		border-radius: var(--radius-md);
+		font-family: var(--font-body);
+		font-size: 0.875rem;
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	.cancel-button {
+		border: 1px solid var(--color-border);
+		background: var(--color-surface);
+		color: var(--color-text);
+	}
+
+	.confirm-delete-button {
+		border: 1px solid var(--color-error);
+		background: var(--color-error);
+		color: white;
+	}
+
+	.confirm-delete-button:disabled {
+		opacity: 0.55;
+		cursor: not-allowed;
 	}
 
 	/* Desktop */

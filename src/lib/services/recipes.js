@@ -102,3 +102,17 @@ export async function updateRecipe(recipeId, recipe) {
 
 	return data;
 }
+
+export async function deleteRecipe(recipeId, householdId) {
+	const { data, error } = await supabase
+		.from('recipes')
+		.delete()
+		.eq('id', recipeId)
+		.eq('household_id', householdId)
+		.select('id')
+		.single();
+
+	if (error) throw error;
+
+	return data;
+}
