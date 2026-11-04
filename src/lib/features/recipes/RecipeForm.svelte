@@ -4,7 +4,7 @@
 	import { resolve } from '$app/paths';
 	import { supabase } from '#lib/supabase.js';
 	import { session } from '#lib/state/session.svelte.js';
-	import { createRecipe } from '#lib/services/recipes.js';
+	import { createRecipe, updateRecipe } from '#lib/services/recipes.js';
 	import IngredientRow from './IngredientRow.svelte';
 	import BackLink from '../components/BackLink.svelte';
 
@@ -64,7 +64,7 @@
 					id: ingredient.id,
 					name: ingredient.ingredient_text,
 					quantity: ingredient.quantity ?? undefined,
-					unitId: ingredient.unit_id ?? '',
+					unitId: ingredient.measurement_units?.id ?? '',
 					preparation: ingredient.preparation ?? ''
 				}))
 			};
@@ -88,11 +88,6 @@
 		event.preventDefault();
 		errorMessage = '';
 
-		if (isEditing) {
-			errorMessage = 'Saving recipe edits is not implemented yet.';
-			return;
-		}
-
 		if (!session.household) {
 			errorMessage = 'No household is available.';
 			return;
@@ -112,20 +107,29 @@
 			preparation: ingredient.preparation.trim()
 		}));
 
+		const recipeData = {
+			title: form.title,
+			description: form.description,
+			yieldDescription: form.yieldDescription,
+			instructions: form.instructions,
+			notes: form.notes,
+			sourceUrl: form.sourceUrl,
+			ingredients: preparedIngredients
+		};
+
 		saving = true;
 
 		try {
-			await createRecipe(session.household.id, {
-				title: form.title,
-				description: form.description,
-				yieldDescription: form.yieldDescription,
-				instructions: form.instructions,
-				notes: form.notes,
-				sourceUrl: form.sourceUrl,
-				ingredients: preparedIngredients
-			});
+			let recipeId;
 
-			await goto(resolve('/recipes'));
+			if (isEditing) {
+				recipeId = recipe.id;
+				await updateRecipe(recipeId, recipeData);
+			} else {
+				recipeId = await createRecipe(session.household.id, recipeData);
+			}
+
+			await goto(resolve('/recipes/[id]', { id: recipeId }));
 		} catch (error) {
 			errorMessage = error.message;
 		} finally {
