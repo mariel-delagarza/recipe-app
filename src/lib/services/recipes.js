@@ -25,7 +25,8 @@ export async function createRecipe(householdId, recipe) {
 		p_source_url: recipe.sourceUrl || null,
 		p_ingredients: recipe.ingredients.map((ingredient) => ({
 			name: ingredient.name,
-			quantity: ingredient.quantity || null,
+			quantity: ingredient.quantity ?? null,
+			quantity_display: ingredient.quantityDisplay ?? null,
 			unit_id: ingredient.unitId || null,
 			preparation: ingredient.preparation || null
 		}))
@@ -54,6 +55,7 @@ export async function getRecipe(recipeId, householdId) {
                 id,
                 ingredient_text,
                 quantity,
+                quantity_display,
                 preparation,
                 sort_order,
                 measurement_units (
@@ -91,6 +93,7 @@ export async function updateRecipe(recipeId, recipe) {
 		p_ingredients: recipe.ingredients.map((ingredient) => ({
 			name: ingredient.name,
 			quantity: ingredient.quantity ?? null,
+			quantity_display: ingredient.quantityDisplay ?? null,
 			unit_id: ingredient.unitId || null,
 			preparation: ingredient.preparation || null
 		}))
