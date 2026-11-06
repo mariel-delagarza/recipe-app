@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { session } from '#lib/state/session.svelte.js';
 	import { deleteRecipe } from '#lib/services/recipes.js';
+	import { displayQuantity } from '#lib/utils/quantities.js';
 	import BackLink from '../components/BackLink.svelte';
 
 	let { recipe } = $props();
@@ -13,14 +14,6 @@
 			.map((step) => step.trim())
 			.filter(Boolean)
 	);
-
-	function formatQuantity(quantity) {
-		if (quantity == null) return '';
-
-		return Number(quantity).toLocaleString('en-US', {
-			maximumFractionDigits: 3
-		});
-	}
 
 	let deleting = $state(false);
 	let deleteError = $state('');
@@ -136,7 +129,7 @@
 						<span class="ingredient-content">
 							{#if ingredient.quantity != null}
 								<span class="quantity">
-									{formatQuantity(ingredient.quantity)}
+									{displayQuantity(ingredient.quantity, ingredient.quantity_display)}
 								</span>
 							{/if}
 

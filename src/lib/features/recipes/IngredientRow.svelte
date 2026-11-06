@@ -57,14 +57,11 @@
 		<label class="quantity-field">
 			Quantity
 			<input
-				type="number"
-				min="0.01"
-				step="any"
-				value={ingredient.quantity ?? ''}
-				oninput={(event) => {
-					const value = event.currentTarget.value;
-					updateField('quantity', value === '' ? null : Number(value));
-				}}
+				type="text"
+				inputmode="text"
+				value={ingredient.quantityDisplay ?? ''}
+				oninput={(event) => updateField('quantityDisplay', event.currentTarget.value)}
+				placeholder="e.g. 1 1/2"
 			/>
 		</label>
 

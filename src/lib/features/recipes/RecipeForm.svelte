@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { supabase } from '#lib/supabase.js';
+	import { parseQuantity, displayQuantity } from '#lib/utils/quantities.js';
 	import { session } from '#lib/state/session.svelte.js';
 	import { createRecipe, updateRecipe } from '#lib/services/recipes.js';
 	import IngredientRow from './IngredientRow.svelte';
@@ -16,7 +17,7 @@
 		return {
 			id: crypto.randomUUID(),
 			name: '',
-			quantity: undefined,
+			quantityDisplay: '',
 			unitId: '',
 			preparation: ''
 		};
@@ -63,7 +64,7 @@
 				ingredients: recipe.recipe_ingredients.map((ingredient) => ({
 					id: ingredient.id,
 					name: ingredient.ingredient_text,
-					quantity: ingredient.quantity ?? undefined,
+					quantityDisplay: displayQuantity(ingredient.quantity, ingredient.quantity_display),
 					unitId: ingredient.measurement_units?.id ?? '',
 					preparation: ingredient.preparation ?? ''
 				}))
@@ -100,12 +101,28 @@
 
 		const eachUnit = units.find((unit) => unit.name === 'each');
 
-		const preparedIngredients = form.ingredients.map((ingredient) => ({
-			name: ingredient.name.trim(),
-			quantity: ingredient.quantity,
-			unitId: ingredient.quantity && !ingredient.unitId ? eachUnit?.id : ingredient.unitId,
-			preparation: ingredient.preparation.trim()
-		}));
+		const preparedIngredients = form.ingredients.map((ingredient) => {
+			const quantityDisplay = ingredient.quantityDisplay.trim();
+			const quantity = parseQuantity(quantityDisplay);
+
+			return {
+				name: ingredient.name.trim(),
+				quantity,
+				quantityDisplay: quantityDisplay || null,
+				unitId: quantity != null && !ingredient.unitId ? eachUnit?.id : ingredient.unitId,
+				preparation: ingredient.preparation.trim()
+			};
+		});
+
+		// Reject invalid quantities before saving.
+		const invalidIndex = preparedIngredients.findIndex(
+			(ingredient) => ingredient.quantityDisplay && ingredient.quantity === null
+		);
+
+		if (invalidIndex !== -1) {
+			errorMessage = `Ingredient ${invalidIndex + 1} has an invalid quantity. Use a number or fraction like 1/2 or 1 1/2.`;
+			return;
+		}
 
 		const recipeData = {
 			title: form.title,
