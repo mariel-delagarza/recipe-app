@@ -36,6 +36,7 @@
 		padding-left: 3.5rem;
 		margin-bottom: var(--space-5);
 		min-height: 2.5rem;
+		align-content: center;
 	}
 
 	.recipe-markdown :global(ol > li::before) {
