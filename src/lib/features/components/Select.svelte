@@ -27,10 +27,18 @@
 			: options
 	);
 
+	$effect(() => {
+		const selectedValue = value;
+
+		activeIndex = Math.max(
+			0,
+			options.findIndex((option) => option.value === selectedValue)
+		);
+	});
+
 	function closeMenu() {
 		open = false;
 		search = '';
-		activeIndex = 0;
 	}
 
 	async function openMenu() {
@@ -69,6 +77,12 @@
 
 	function selectOption(option) {
 		onChange?.(option.value);
+
+		activeIndex = Math.max(
+			0,
+			options.findIndex((item) => item.value === option.value)
+		);
+
 		closeMenu();
 		trigger?.focus();
 	}
