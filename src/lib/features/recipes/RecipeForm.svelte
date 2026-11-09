@@ -9,6 +9,19 @@
 	import IngredientRow from './IngredientRow.svelte';
 	import BackLink from '../components/BackLink.svelte';
 
+	const COOKING_METHODS = [
+		'Stovetop',
+		'Oven',
+		'Air fryer',
+		'Slow cooker',
+		'Pressure cooker / Instant Pot',
+		'Grill',
+		'Smoker',
+		'Microwave',
+		'Sous vide',
+		'No-cook'
+	];
+
 	let { recipe = null } = $props();
 
 	let isEditing = $derived(recipe !== null);
@@ -20,7 +33,7 @@
 			quantityDisplay: '',
 			unitId: '',
 			preparation: '',
-      isOptional: false
+			isOptional: false
 		};
 	}
 
@@ -31,13 +44,22 @@
 		instructions: '',
 		notes: '',
 		sourceUrl: '',
-		ingredients: [newIngredient()]
+		ingredients: [newIngredient()],
+		cookingMethods: []
 	});
 
 	let units = $state([]);
 	let loading = $state(true);
 	let saving = $state(false);
 	let errorMessage = $state('');
+
+	function toggleCookingMethod(method) {
+		if (form.cookingMethods.includes(method)) {
+			form.cookingMethods = form.cookingMethods.filter((item) => item !== method);
+		} else {
+			form.cookingMethods = [...form.cookingMethods, method];
+		}
+	}
 
 	function addIngredient() {
 		form.ingredients.push(newIngredient());
@@ -62,11 +84,12 @@
 				instructions: recipe.instructions ?? '',
 				notes: recipe.notes ?? '',
 				sourceUrl: recipe.source_url ?? '',
+				cookingMethods: recipe.cooking_methods ?? [],
 				ingredients: recipe.recipe_ingredients.map((ingredient) => ({
 					id: ingredient.id,
 					name: ingredient.ingredient_text,
 					quantityDisplay: displayQuantity(ingredient.quantity, ingredient.quantity_display),
-          isOptional: ingredient.is_optional ?? false,
+					isOptional: ingredient.is_optional ?? false,
 					unitId: ingredient.measurement_units?.id ?? '',
 					preparation: ingredient.preparation ?? ''
 				}))
@@ -111,7 +134,7 @@
 				name: ingredient.name.trim(),
 				quantity,
 				quantityDisplay: quantityDisplay || null,
-        isOptional: ingredient.isOptional ?? false,
+				isOptional: ingredient.isOptional ?? false,
 				unitId: quantity != null && !ingredient.unitId ? eachUnit?.id : ingredient.unitId,
 				preparation: ingredient.preparation.trim()
 			};
@@ -134,7 +157,8 @@
 			instructions: form.instructions,
 			notes: form.notes,
 			sourceUrl: form.sourceUrl,
-			ingredients: preparedIngredients
+			ingredients: preparedIngredients,
+			cookingMethods: form.cookingMethods
 		};
 
 		saving = true;
@@ -193,6 +217,23 @@
 					class="source-url-input"
 				/>
 			</label>
+		</div>
+	</section>
+	<section class="form-section">
+		<h2>Cooking methods</h2>
+		<p>Select all that apply.</p>
+
+		<div class="cooking-methods">
+			{#each COOKING_METHODS as method (method)}
+				<label class="cooking-method">
+					<input
+						type="checkbox"
+						checked={form.cookingMethods.includes(method)}
+						onchange={() => toggleCookingMethod(method)}
+					/>
+					<span>{method}</span>
+				</label>
+			{/each}
 		</div>
 	</section>
 
@@ -432,6 +473,29 @@
 	.save-button:disabled {
 		opacity: 0.55;
 		cursor: not-allowed;
+	}
+
+	.cooking-methods {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+		gap: var(--space-3);
+	}
+
+	.cooking-method {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
+		cursor: pointer;
+	}
+
+	.cooking-method input {
+		width: 18px;
+		height: 18px;
+		min-height: 0;
+		margin: 0;
+		padding: 0;
+		flex-shrink: 0;
+		accent-color: var(--color-burgundy);
 	}
 
 	@media (min-width: 700px) {
