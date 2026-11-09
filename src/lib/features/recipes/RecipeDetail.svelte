@@ -87,6 +87,15 @@
 				{recipe.yield_description}
 			</p>
 		{/if}
+		{#if recipe.cooking_methods?.length}
+			<div class="recipe-methods" aria-label="Cooking methods">
+				{#each recipe.cooking_methods as method (method)}
+					<span class="recipe-method">
+						{method === 'Pressure cooker / Instant Pot' ? 'Pressure cooker' : method}
+					</span>
+				{/each}
+			</div>
+		{/if}
 	</header>
 
 	<!-- Shopping list action -->
@@ -300,6 +309,26 @@
 		font-weight: 700;
 		letter-spacing: 0.1em;
 		text-transform: uppercase;
+	}
+
+	.recipe-methods {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+		margin-top: var(--space-1);
+	}
+
+	.recipe-method {
+		display: inline-flex;
+		align-items: center;
+		padding: 0.3rem 0.75rem;
+		border: none;
+		border-radius: var(--radius-sm);
+		background: var(--color-sage);
+		color: var(--color-olive);
+		font-size: 0.8125rem;
+		font-weight: 500;
+		line-height: 1.3;
 	}
 
 	/* Shopping list action */

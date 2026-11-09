@@ -225,14 +225,15 @@
 
 		<div class="cooking-methods">
 			{#each COOKING_METHODS as method (method)}
-				<label class="cooking-method">
-					<input
-						type="checkbox"
-						checked={form.cookingMethods.includes(method)}
-						onchange={() => toggleCookingMethod(method)}
-					/>
-					<span>{method}</span>
-				</label>
+				<button
+					type="button"
+					class="method-pill"
+					class:selected={form.cookingMethods.includes(method)}
+					aria-pressed={form.cookingMethods.includes(method)}
+					onclick={() => toggleCookingMethod(method)}
+				>
+					{method === 'Pressure cooker / Instant Pot' ? 'Pressure cooker' : method}
+				</button>
 			{/each}
 		</div>
 	</section>
@@ -476,26 +477,39 @@
 	}
 
 	.cooking-methods {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-		gap: var(--space-3);
-	}
-
-	.cooking-method {
 		display: flex;
-		align-items: center;
+		flex-wrap: wrap;
 		gap: var(--space-2);
-		cursor: pointer;
 	}
 
-	.cooking-method input {
-		width: 18px;
-		height: 18px;
+	.method-pill {
+		width: auto;
 		min-height: 0;
-		margin: 0;
-		padding: 0;
-		flex-shrink: 0;
-		accent-color: var(--color-burgundy);
+		padding: 0.5rem 0.875rem;
+		border: 1px solid var(--color-border);
+		border-radius: 999px;
+		background: transparent;
+		color: var(--color-text);
+		font: inherit;
+		font-size: 0.875rem;
+		font-weight: 400;
+		line-height: 1.3;
+		cursor: pointer;
+		transition:
+			background-color 150ms ease,
+			border-color 150ms ease,
+			color 150ms ease;
+	}
+
+	.method-pill.selected {
+		background: var(--color-burgundy);
+		border-color: var(--color-burgundy);
+		color: white;
+	}
+
+	.method-pill:focus-visible {
+		outline: 2px solid var(--color-burgundy);
+		outline-offset: 3px;
 	}
 
 	@media (min-width: 700px) {
