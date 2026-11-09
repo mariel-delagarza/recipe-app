@@ -5,15 +5,9 @@
 	import { deleteRecipe } from '#lib/services/recipes.js';
 	import { displayQuantity } from '#lib/utils/quantities.js';
 	import BackLink from '../components/BackLink.svelte';
+	import Markdown from '../components/Markdown.svelte';
 
 	let { recipe } = $props();
-
-	let instructionSteps = $derived(
-		(recipe.instructions ?? '')
-			.split(/\n\s*\n/)
-			.map((step) => step.trim())
-			.filter(Boolean)
-	);
 
 	let deleting = $state(false);
 	let deleteError = $state('');
@@ -168,21 +162,11 @@
 	</section>
 
 	<!-- Instructions -->
-	{#if instructionSteps.length > 0}
+	{#if recipe.instructions?.trim()}
 		<section class="recipe-section">
 			<h2>Instructions</h2>
 
-			<ol class="instruction-list">
-				{#each instructionSteps as step, index (index)}
-					<li>
-						<span class="step-number" aria-hidden="true">
-							{index + 1}
-						</span>
-
-						<p class="step-text">{step}</p>
-					</li>
-				{/each}
-			</ol>
+			<Markdown content={recipe.instructions} />
 		</section>
 	{/if}
 
@@ -478,48 +462,6 @@
 		font-weight: 600;
 		line-height: 1.5;
 		vertical-align: middle;
-	}
-
-	/* Instructions */
-
-	.instruction-list {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-5);
-		margin: 0;
-		padding: 0;
-		list-style: none;
-	}
-
-	.instruction-list li {
-		display: flex;
-		align-items: flex-start;
-		gap: var(--space-3);
-	}
-
-	.step-number {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		flex-shrink: 0;
-		width: 38px;
-		height: 38px;
-		border-radius: 50%;
-		background: var(--color-sage);
-		color: var(--color-olive);
-		font-size: 1rem;
-		font-weight: 600;
-	}
-
-	.step-text {
-		flex: 1;
-		min-width: 0;
-		margin: 0;
-		padding-top: 2px;
-		white-space: pre-line;
-		font-size: 1.1875rem;
-		line-height: 1.7;
-		color: var(--color-text);
 	}
 
 	/* Notes */

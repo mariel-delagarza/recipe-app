@@ -8,6 +8,7 @@
 	import { createRecipe, updateRecipe } from '#lib/services/recipes.js';
 	import IngredientRow from './IngredientRow.svelte';
 	import BackLink from '../components/BackLink.svelte';
+	import Markdown from '../components/Markdown.svelte';
 
 	const COOKING_METHODS = [
 		'Stovetop',
@@ -52,6 +53,7 @@
 	let loading = $state(true);
 	let saving = $state(false);
 	let errorMessage = $state('');
+	let instructionsMode = $state('write');
 
 	function toggleCookingMethod(method) {
 		if (form.cookingMethods.includes(method)) {
@@ -260,15 +262,45 @@
 	</section>
 
 	<section class="form-section method-section">
-		<h2>Instructions</h2>
+		<div class="markdown-heading">
+			<h2>Instructions</h2>
 
-		<label>
-			<p class="field-hint">Write each step as a separate paragraph.</p>
+			<div class="markdown-tabs" aria-label="Instructions editor mode">
+				<button
+					type="button"
+					class:active={instructionsMode === 'write'}
+					aria-pressed={instructionsMode === 'write'}
+					onclick={() => (instructionsMode = 'write')}
+				>
+					Write
+				</button>
+				<button
+					type="button"
+					class:active={instructionsMode === 'preview'}
+					aria-pressed={instructionsMode === 'preview'}
+					onclick={() => (instructionsMode = 'preview')}
+				>
+					Preview
+				</button>
+			</div>
+		</div>
+
+		{#if instructionsMode === 'write'}
+			<p class="field-hint">Use Markdown for headings, lists, and formatting.</p>
 			<textarea
+				aria-label="Recipe instructions"
 				bind:value={form.instructions}
 				rows="6"
-				placeholder="Describe how to make this recipe..."></textarea>
-		</label>
+				placeholder="1. Prepare the ingredients..."></textarea>
+		{:else}
+			<div class="markdown-preview">
+				{#if form.instructions.trim()}
+					<Markdown content={form.instructions} />
+				{:else}
+					<p class="field-hint">Nothing to preview yet.</p>
+				{/if}
+			</div>
+		{/if}
 	</section>
 
 	<section class="form-section notes-section">
@@ -510,6 +542,58 @@
 	.method-pill:focus-visible {
 		outline: 2px solid var(--color-burgundy);
 		outline-offset: 3px;
+	}
+
+	.markdown-heading {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: var(--space-3);
+		margin-bottom: var(--space-4);
+	}
+
+	.markdown-heading h2 {
+		margin: 0;
+	}
+
+	.markdown-tabs {
+		display: inline-flex;
+		gap: var(--space-1);
+		padding: var(--space-1);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
+		background: var(--color-surface-muted);
+	}
+
+	.markdown-tabs button {
+		width: auto;
+		min-height: 0;
+		padding: 0.5rem 0.875rem;
+		border: 0;
+		border-radius: var(--radius-sm);
+		background: transparent;
+		color: var(--color-text-muted);
+		font-size: var(--font-size-caption);
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	.markdown-tabs button.active {
+		background: var(--color-burgundy);
+		color: white;
+	}
+
+	.markdown-preview {
+		min-height: 180px;
+		padding: var(--space-4);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-sm);
+		background: var(--color-surface);
+	}
+
+	.markdown-preview .field-hint {
+		margin: 0;
 	}
 
 	@media (min-width: 700px) {
