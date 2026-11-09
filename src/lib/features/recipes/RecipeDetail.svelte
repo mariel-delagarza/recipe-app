@@ -171,10 +171,12 @@
 	{/if}
 
 	<!-- Notes -->
-	{#if recipe.notes}
+	{#if recipe.notes?.trim()}
 		<section class="recipe-section">
 			<h2>Notes</h2>
-			<p class="notes">{recipe.notes}</p>
+			<div class="notes">
+				<Markdown content={recipe.notes} />
+			</div>
 		</section>
 	{/if}
 
@@ -472,7 +474,6 @@
 		border-left: 3px solid var(--color-olive);
 		background: var(--color-sage);
 		border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-		white-space: pre-line;
 		font-size: 0.875rem;
 		line-height: 1.75;
 		color: var(--color-text);

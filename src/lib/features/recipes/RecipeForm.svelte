@@ -54,6 +54,7 @@
 	let saving = $state(false);
 	let errorMessage = $state('');
 	let instructionsMode = $state('write');
+	let notesMode = $state('write');
 
 	function toggleCookingMethod(method) {
 		if (form.cookingMethods.includes(method)) {
@@ -303,12 +304,51 @@
 		{/if}
 	</section>
 
+	<!-- Notes -->
 	<section class="form-section notes-section">
-		<h2>Notes</h2>
-		<p class="field-hint">Substitutions, adjustments, or anything worth remembering.</p>
-		<label>
-			<textarea bind:value={form.notes} rows="4" placeholder="Optional notes..."></textarea>
-		</label>
+		<div class="markdown-heading">
+			<h2>Notes</h2>
+
+			<div class="markdown-tabs" aria-label="Notes editor mode">
+				<button
+					type="button"
+					class:active={notesMode === 'write'}
+					aria-pressed={notesMode === 'write'}
+					onclick={() => (notesMode = 'write')}
+				>
+					Write
+				</button>
+
+				<button
+					type="button"
+					class:active={notesMode === 'preview'}
+					aria-pressed={notesMode === 'preview'}
+					onclick={() => (notesMode = 'preview')}
+				>
+					Preview
+				</button>
+			</div>
+		</div>
+
+		{#if notesMode === 'write'}
+			<p class="field-hint">
+				Substitutions, adjustments, or anything worth remembering. Markdown supported.
+			</p>
+
+			<textarea
+				aria-label="Recipe notes"
+				bind:value={form.notes}
+				rows="4"
+				placeholder="Optional notes..."></textarea>
+		{:else}
+			<div class="markdown-preview">
+				{#if form.notes?.trim()}
+					<Markdown content={form.notes} />
+				{:else}
+					<p class="field-hint">Nothing to preview yet.</p>
+				{/if}
+			</div>
+		{/if}
 	</section>
 
 	{#if errorMessage}
