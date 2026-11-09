@@ -17,7 +17,7 @@
 	let container;
 	let searchInput = $state(null);
 	let trigger;
-	let optionsList;
+	let optionsList = $state(null);
 
 	let selectedOption = $derived(options.find((option) => option.value === value));
 
