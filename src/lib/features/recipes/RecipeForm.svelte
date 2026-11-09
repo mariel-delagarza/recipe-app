@@ -19,7 +19,8 @@
 			name: '',
 			quantityDisplay: '',
 			unitId: '',
-			preparation: ''
+			preparation: '',
+      isOptional: false
 		};
 	}
 
@@ -65,6 +66,7 @@
 					id: ingredient.id,
 					name: ingredient.ingredient_text,
 					quantityDisplay: displayQuantity(ingredient.quantity, ingredient.quantity_display),
+          isOptional: ingredient.is_optional ?? false,
 					unitId: ingredient.measurement_units?.id ?? '',
 					preparation: ingredient.preparation ?? ''
 				}))
@@ -109,6 +111,7 @@
 				name: ingredient.name.trim(),
 				quantity,
 				quantityDisplay: quantityDisplay || null,
+        isOptional: ingredient.isOptional ?? false,
 				unitId: quantity != null && !ingredient.unitId ? eachUnit?.id : ingredient.unitId,
 				preparation: ingredient.preparation.trim()
 			};

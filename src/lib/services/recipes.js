@@ -27,6 +27,7 @@ export async function createRecipe(householdId, recipe) {
 			name: ingredient.name,
 			quantity: ingredient.quantity ?? null,
 			quantity_display: ingredient.quantityDisplay ?? null,
+      is_optional: ingredient.isOptional ?? false,
 			unit_id: ingredient.unitId || null,
 			preparation: ingredient.preparation || null
 		}))
@@ -56,6 +57,7 @@ export async function getRecipe(recipeId, householdId) {
                 ingredient_text,
                 quantity,
                 quantity_display,
+                is_optional,
                 preparation,
                 sort_order,
                 measurement_units (
@@ -94,6 +96,7 @@ export async function updateRecipe(recipeId, recipe) {
 			name: ingredient.name,
 			quantity: ingredient.quantity ?? null,
 			quantity_display: ingredient.quantityDisplay ?? null,
+      is_optional: ingredient.isOptional ?? false,
 			unit_id: ingredient.unitId || null,
 			preparation: ingredient.preparation || null
 		}))

@@ -148,6 +148,9 @@
 									, {ingredient.preparation}
 								</span>
 							{/if}
+							{#if ingredient.is_optional}
+								<span class="optional-tag">Optional</span>
+							{/if}
 						</span>
 					</label>
 				</li>
@@ -433,6 +436,19 @@
 	.preparation {
 		color: var(--color-text-muted);
 		font-style: italic;
+	}
+
+	.optional-tag {
+		display: inline-block;
+		margin-left: var(--space-2);
+		padding: 0.125rem 0.5rem;
+		border-radius: var(--radius-sm);
+		background: var(--color-sage);
+		color: var(--color-olive);
+		font-size: 0.75rem;
+		font-weight: 600;
+		line-height: 1.5;
+		vertical-align: middle;
 	}
 
 	/* Instructions */
