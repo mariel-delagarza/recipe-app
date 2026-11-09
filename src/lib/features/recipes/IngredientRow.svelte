@@ -78,6 +78,7 @@
 				]}
 				value={ingredient.unitId}
 				searchable
+        openOnFocus
 				searchPlaceholder="Search units..."
 				onChange={(value) => updateField('unitId', value)}
 			/>
