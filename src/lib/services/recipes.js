@@ -23,9 +23,12 @@ export async function createRecipe(householdId, recipe) {
 		p_instructions: recipe.instructions || '',
 		p_notes: recipe.notes || null,
 		p_source_url: recipe.sourceUrl || null,
+    p_cooking_methods: recipe.cookingMethods ?? [],
 		p_ingredients: recipe.ingredients.map((ingredient) => ({
 			name: ingredient.name,
-			quantity: ingredient.quantity || null,
+			quantity: ingredient.quantity ?? null,
+			quantity_display: ingredient.quantityDisplay ?? null,
+      is_optional: ingredient.isOptional ?? false,
 			unit_id: ingredient.unitId || null,
 			preparation: ingredient.preparation || null
 		}))
@@ -50,10 +53,13 @@ export async function getRecipe(recipeId, householdId) {
             instructions,
             notes,
             source_url,
+            cooking_methods,
             recipe_ingredients (
                 id,
                 ingredient_text,
                 quantity,
+                quantity_display,
+                is_optional,
                 preparation,
                 sort_order,
                 measurement_units (
@@ -88,9 +94,12 @@ export async function updateRecipe(recipeId, recipe) {
 		p_instructions: recipe.instructions || '',
 		p_notes: recipe.notes || null,
 		p_source_url: recipe.sourceUrl || null,
+    p_cooking_methods: recipe.cookingMethods ?? [],
 		p_ingredients: recipe.ingredients.map((ingredient) => ({
 			name: ingredient.name,
 			quantity: ingredient.quantity ?? null,
+			quantity_display: ingredient.quantityDisplay ?? null,
+      is_optional: ingredient.isOptional ?? false,
 			unit_id: ingredient.unitId || null,
 			preparation: ingredient.preparation || null
 		}))

@@ -3,24 +3,11 @@
 	import { goto } from '$app/navigation';
 	import { session } from '#lib/state/session.svelte.js';
 	import { deleteRecipe } from '#lib/services/recipes.js';
+	import { displayQuantity } from '#lib/utils/quantities.js';
 	import BackLink from '../components/BackLink.svelte';
+	import Markdown from '../components/Markdown.svelte';
 
 	let { recipe } = $props();
-
-	let instructionSteps = $derived(
-		(recipe.instructions ?? '')
-			.split(/\n\s*\n/)
-			.map((step) => step.trim())
-			.filter(Boolean)
-	);
-
-	function formatQuantity(quantity) {
-		if (quantity == null) return '';
-
-		return Number(quantity).toLocaleString('en-US', {
-			maximumFractionDigits: 3
-		});
-	}
 
 	let deleting = $state(false);
 	let deleteError = $state('');
@@ -94,6 +81,15 @@
 				{recipe.yield_description}
 			</p>
 		{/if}
+		{#if recipe.cooking_methods?.length}
+			<div class="recipe-methods" aria-label="Cooking methods">
+				{#each recipe.cooking_methods as method (method)}
+					<span class="recipe-method">
+						{method === 'Pressure cooker / Instant Pot' ? 'Pressure cooker' : method}
+					</span>
+				{/each}
+			</div>
+		{/if}
 	</header>
 
 	<!-- Shopping list action -->
@@ -136,7 +132,7 @@
 						<span class="ingredient-content">
 							{#if ingredient.quantity != null}
 								<span class="quantity">
-									{formatQuantity(ingredient.quantity)}
+									{displayQuantity(ingredient.quantity, ingredient.quantity_display)}
 								</span>
 							{/if}
 
@@ -155,6 +151,9 @@
 									, {ingredient.preparation}
 								</span>
 							{/if}
+							{#if ingredient.is_optional}
+								<span class="optional-tag">Optional</span>
+							{/if}
 						</span>
 					</label>
 				</li>
@@ -163,29 +162,21 @@
 	</section>
 
 	<!-- Instructions -->
-	{#if instructionSteps.length > 0}
+	{#if recipe.instructions?.trim()}
 		<section class="recipe-section">
 			<h2>Instructions</h2>
 
-			<ol class="instruction-list">
-				{#each instructionSteps as step, index (index)}
-					<li>
-						<span class="step-number" aria-hidden="true">
-							{index + 1}
-						</span>
-
-						<p class="step-text">{step}</p>
-					</li>
-				{/each}
-			</ol>
+			<Markdown content={recipe.instructions} />
 		</section>
 	{/if}
 
 	<!-- Notes -->
-	{#if recipe.notes}
+	{#if recipe.notes?.trim()}
 		<section class="recipe-section">
 			<h2>Notes</h2>
-			<p class="notes">{recipe.notes}</p>
+			<div class="notes">
+				<Markdown content={recipe.notes} />
+			</div>
 		</section>
 	{/if}
 
@@ -304,6 +295,26 @@
 		font-weight: 700;
 		letter-spacing: 0.1em;
 		text-transform: uppercase;
+	}
+
+	.recipe-methods {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+		margin-top: var(--space-1);
+	}
+
+	.recipe-method {
+		display: inline-flex;
+		align-items: center;
+		padding: 0.3rem 0.75rem;
+		border: none;
+		border-radius: var(--radius-sm);
+		background: var(--color-sage);
+		color: var(--color-olive);
+		font-size: 0.8125rem;
+		font-weight: 500;
+		line-height: 1.3;
 	}
 
 	/* Shopping list action */
@@ -442,46 +453,17 @@
 		font-style: italic;
 	}
 
-	/* Instructions */
-
-	.instruction-list {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-5);
-		margin: 0;
-		padding: 0;
-		list-style: none;
-	}
-
-	.instruction-list li {
-		display: flex;
-		align-items: flex-start;
-		gap: var(--space-3);
-	}
-
-	.step-number {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		flex-shrink: 0;
-		width: 38px;
-		height: 38px;
-		border-radius: 50%;
+	.optional-tag {
+		display: inline-block;
+		margin-left: var(--space-2);
+		padding: 0.125rem 0.5rem;
+		border-radius: var(--radius-sm);
 		background: var(--color-sage);
 		color: var(--color-olive);
-		font-size: 1rem;
+		font-size: 0.75rem;
 		font-weight: 600;
-	}
-
-	.step-text {
-		flex: 1;
-		min-width: 0;
-		margin: 0;
-		padding-top: 2px;
-		white-space: pre-line;
-		font-size: 1.1875rem;
-		line-height: 1.7;
-		color: var(--color-text);
+		line-height: 1.5;
+		vertical-align: middle;
 	}
 
 	/* Notes */
@@ -492,7 +474,6 @@
 		border-left: 3px solid var(--color-olive);
 		background: var(--color-sage);
 		border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-		white-space: pre-line;
 		font-size: 0.875rem;
 		line-height: 1.75;
 		color: var(--color-text);

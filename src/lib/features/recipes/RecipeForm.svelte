@@ -3,10 +3,25 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { supabase } from '#lib/supabase.js';
+	import { parseQuantity, displayQuantity } from '#lib/utils/quantities.js';
 	import { session } from '#lib/state/session.svelte.js';
 	import { createRecipe, updateRecipe } from '#lib/services/recipes.js';
 	import IngredientRow from './IngredientRow.svelte';
 	import BackLink from '../components/BackLink.svelte';
+	import Markdown from '../components/Markdown.svelte';
+
+	const COOKING_METHODS = [
+		'Stovetop',
+		'Oven',
+		'Air fryer',
+		'Slow cooker',
+		'Pressure cooker / Instant Pot',
+		'Grill',
+		'Smoker',
+		'Microwave',
+		'Sous vide',
+		'No-cook'
+	];
 
 	let { recipe = null } = $props();
 
@@ -16,9 +31,10 @@
 		return {
 			id: crypto.randomUUID(),
 			name: '',
-			quantity: undefined,
+			quantityDisplay: '',
 			unitId: '',
-			preparation: ''
+			preparation: '',
+			isOptional: false
 		};
 	}
 
@@ -29,13 +45,24 @@
 		instructions: '',
 		notes: '',
 		sourceUrl: '',
-		ingredients: [newIngredient()]
+		ingredients: [newIngredient()],
+		cookingMethods: []
 	});
 
 	let units = $state([]);
 	let loading = $state(true);
 	let saving = $state(false);
 	let errorMessage = $state('');
+	let instructionsMode = $state('write');
+	let notesMode = $state('write');
+
+	function toggleCookingMethod(method) {
+		if (form.cookingMethods.includes(method)) {
+			form.cookingMethods = form.cookingMethods.filter((item) => item !== method);
+		} else {
+			form.cookingMethods = [...form.cookingMethods, method];
+		}
+	}
 
 	function addIngredient() {
 		form.ingredients.push(newIngredient());
@@ -60,10 +87,12 @@
 				instructions: recipe.instructions ?? '',
 				notes: recipe.notes ?? '',
 				sourceUrl: recipe.source_url ?? '',
+				cookingMethods: recipe.cooking_methods ?? [],
 				ingredients: recipe.recipe_ingredients.map((ingredient) => ({
 					id: ingredient.id,
 					name: ingredient.ingredient_text,
-					quantity: ingredient.quantity ?? undefined,
+					quantityDisplay: displayQuantity(ingredient.quantity, ingredient.quantity_display),
+					isOptional: ingredient.is_optional ?? false,
 					unitId: ingredient.measurement_units?.id ?? '',
 					preparation: ingredient.preparation ?? ''
 				}))
@@ -100,12 +129,29 @@
 
 		const eachUnit = units.find((unit) => unit.name === 'each');
 
-		const preparedIngredients = form.ingredients.map((ingredient) => ({
-			name: ingredient.name.trim(),
-			quantity: ingredient.quantity,
-			unitId: ingredient.quantity && !ingredient.unitId ? eachUnit?.id : ingredient.unitId,
-			preparation: ingredient.preparation.trim()
-		}));
+		const preparedIngredients = form.ingredients.map((ingredient) => {
+			const quantityDisplay = ingredient.quantityDisplay.trim();
+			const quantity = parseQuantity(quantityDisplay);
+
+			return {
+				name: ingredient.name.trim(),
+				quantity,
+				quantityDisplay: quantityDisplay || null,
+				isOptional: ingredient.isOptional ?? false,
+				unitId: quantity != null && !ingredient.unitId ? eachUnit?.id : ingredient.unitId,
+				preparation: ingredient.preparation.trim()
+			};
+		});
+
+		// Reject invalid quantities before saving.
+		const invalidIndex = preparedIngredients.findIndex(
+			(ingredient) => ingredient.quantityDisplay && ingredient.quantity === null
+		);
+
+		if (invalidIndex !== -1) {
+			errorMessage = `Ingredient ${invalidIndex + 1} has an invalid quantity. Use a number or fraction like 1/2 or 1 1/2.`;
+			return;
+		}
 
 		const recipeData = {
 			title: form.title,
@@ -114,7 +160,8 @@
 			instructions: form.instructions,
 			notes: form.notes,
 			sourceUrl: form.sourceUrl,
-			ingredients: preparedIngredients
+			ingredients: preparedIngredients,
+			cookingMethods: form.cookingMethods
 		};
 
 		saving = true;
@@ -175,6 +222,24 @@
 			</label>
 		</div>
 	</section>
+	<section class="form-section">
+		<h2>Cooking methods</h2>
+		<p>Select all that apply.</p>
+
+		<div class="cooking-methods">
+			{#each COOKING_METHODS as method (method)}
+				<button
+					type="button"
+					class="method-pill"
+					class:selected={form.cookingMethods.includes(method)}
+					aria-pressed={form.cookingMethods.includes(method)}
+					onclick={() => toggleCookingMethod(method)}
+				>
+					{method === 'Pressure cooker / Instant Pot' ? 'Pressure cooker' : method}
+				</button>
+			{/each}
+		</div>
+	</section>
 
 	<section class="form-section ingredients-section">
 		<h2>Ingredients</h2>
@@ -198,23 +263,92 @@
 	</section>
 
 	<section class="form-section method-section">
-		<h2>Instructions</h2>
+		<div class="markdown-heading">
+			<h2>Instructions</h2>
 
-		<label>
-			<p class="field-hint">Write each step as a separate paragraph.</p>
+			<div class="markdown-tabs" aria-label="Instructions editor mode">
+				<button
+					type="button"
+					class:active={instructionsMode === 'write'}
+					aria-pressed={instructionsMode === 'write'}
+					onclick={() => (instructionsMode = 'write')}
+				>
+					Write
+				</button>
+				<button
+					type="button"
+					class:active={instructionsMode === 'preview'}
+					aria-pressed={instructionsMode === 'preview'}
+					onclick={() => (instructionsMode = 'preview')}
+				>
+					Preview
+				</button>
+			</div>
+		</div>
+
+		{#if instructionsMode === 'write'}
+			<p class="field-hint">Use Markdown for headings, lists, and formatting.</p>
 			<textarea
+				aria-label="Recipe instructions"
 				bind:value={form.instructions}
 				rows="6"
-				placeholder="Describe how to make this recipe..."></textarea>
-		</label>
+				placeholder="1. Prepare the ingredients..."></textarea>
+		{:else}
+			<div class="markdown-preview">
+				{#if form.instructions.trim()}
+					<Markdown content={form.instructions} />
+				{:else}
+					<p class="field-hint">Nothing to preview yet.</p>
+				{/if}
+			</div>
+		{/if}
 	</section>
 
+	<!-- Notes -->
 	<section class="form-section notes-section">
-		<h2>Notes</h2>
-		<p class="field-hint">Substitutions, adjustments, or anything worth remembering.</p>
-		<label>
-			<textarea bind:value={form.notes} rows="4" placeholder="Optional notes..."></textarea>
-		</label>
+		<div class="markdown-heading">
+			<h2>Notes</h2>
+
+			<div class="markdown-tabs" aria-label="Notes editor mode">
+				<button
+					type="button"
+					class:active={notesMode === 'write'}
+					aria-pressed={notesMode === 'write'}
+					onclick={() => (notesMode = 'write')}
+				>
+					Write
+				</button>
+
+				<button
+					type="button"
+					class:active={notesMode === 'preview'}
+					aria-pressed={notesMode === 'preview'}
+					onclick={() => (notesMode = 'preview')}
+				>
+					Preview
+				</button>
+			</div>
+		</div>
+
+		{#if notesMode === 'write'}
+			<p class="field-hint">
+				Substitutions, adjustments, or anything worth remembering. Markdown supported.
+			</p>
+
+			<textarea
+				aria-label="Recipe notes"
+				bind:value={form.notes}
+				rows="4"
+				placeholder="Optional notes..."></textarea>
+		{:else}
+			<div class="markdown-preview">
+				{#if form.notes?.trim()}
+					<Markdown content={form.notes} />
+				{:else}
+					<p class="field-hint">Nothing to preview yet.</p>
+				{/if}
+			</div>
+		{/if}
 	</section>
 
 	{#if errorMessage}
@@ -412,6 +546,94 @@
 	.save-button:disabled {
 		opacity: 0.55;
 		cursor: not-allowed;
+	}
+
+	.cooking-methods {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+	}
+
+	.method-pill {
+		width: auto;
+		min-height: 0;
+		padding: 0.5rem 0.875rem;
+		border: 1px solid var(--color-border);
+		border-radius: 999px;
+		background: transparent;
+		color: var(--color-text);
+		font: inherit;
+		font-size: 0.875rem;
+		font-weight: 400;
+		line-height: 1.3;
+		cursor: pointer;
+		transition:
+			background-color 150ms ease,
+			border-color 150ms ease,
+			color 150ms ease;
+	}
+
+	.method-pill.selected {
+		background: var(--color-burgundy);
+		border-color: var(--color-burgundy);
+		color: white;
+	}
+
+	.method-pill:focus-visible {
+		outline: 2px solid var(--color-burgundy);
+		outline-offset: 3px;
+	}
+
+	.markdown-heading {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: var(--space-3);
+		margin-bottom: var(--space-4);
+	}
+
+	.markdown-heading h2 {
+		margin: 0;
+	}
+
+	.markdown-tabs {
+		display: inline-flex;
+		gap: var(--space-1);
+		padding: var(--space-1);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
+		background: var(--color-surface-muted);
+	}
+
+	.markdown-tabs button {
+		width: auto;
+		min-height: 0;
+		padding: 0.5rem 0.875rem;
+		border: 0;
+		border-radius: var(--radius-sm);
+		background: transparent;
+		color: var(--color-text-muted);
+		font-size: var(--font-size-caption);
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	.markdown-tabs button.active {
+		background: var(--color-burgundy);
+		color: white;
+	}
+
+	.markdown-preview {
+		min-height: 180px;
+		padding: var(--space-4);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-sm);
+		background: var(--color-surface);
+	}
+
+	.markdown-preview .field-hint {
+		margin: 0;
 	}
 
 	@media (min-width: 700px) {

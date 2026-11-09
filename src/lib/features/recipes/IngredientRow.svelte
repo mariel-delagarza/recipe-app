@@ -15,31 +15,42 @@
 	<div class="ingredient-header">
 		<span class="ingredient-number">Ingredient {number}</span>
 
-		<button
-			class="remove-button"
-			type="button"
-			onclick={onRemove}
-			aria-label={`Remove ingredient ${number}`}
-		>
-			<svg
-				width="16"
-				height="16"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="1.8"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				aria-hidden="true"
+		<div class="ingredient-actions">
+			<label class="optional-label">
+				<input
+					type="checkbox"
+					checked={ingredient.isOptional ?? false}
+					onchange={(event) => updateField('isOptional', event.currentTarget.checked)}
+				/>
+				Optional
+			</label>
+
+			<button
+				class="remove-button"
+				type="button"
+				onclick={onRemove}
+				aria-label={`Remove ingredient ${number}`}
 			>
-				<path d="M3 6h18" />
-				<path d="M8 6V4h8v2" />
-				<path d="M5 6l1 14h12l1-14" />
-				<path d="M10 10v7" />
-				<path d="M14 10v7" />
-			</svg>
-			Remove
-		</button>
+				<svg
+					width="16"
+					height="16"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.8"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
+					<path d="M3 6h18" />
+					<path d="M8 6V4h8v2" />
+					<path d="M5 6l1 14h12l1-14" />
+					<path d="M10 10v7" />
+					<path d="M14 10v7" />
+				</svg>
+				Remove
+			</button>
+		</div>
 	</div>
 
 	<div class="ingredient-fields">
@@ -57,14 +68,11 @@
 		<label class="quantity-field">
 			Quantity
 			<input
-				type="number"
-				min="0.01"
-				step="any"
-				value={ingredient.quantity ?? ''}
-				oninput={(event) => {
-					const value = event.currentTarget.value;
-					updateField('quantity', value === '' ? null : Number(value));
-				}}
+				type="text"
+				inputmode="text"
+				value={ingredient.quantityDisplay ?? ''}
+				oninput={(event) => updateField('quantityDisplay', event.currentTarget.value)}
+				placeholder="e.g. 1 1/2"
 			/>
 		</label>
 
@@ -81,6 +89,7 @@
 				]}
 				value={ingredient.unitId}
 				searchable
+				openOnFocus
 				searchPlaceholder="Search units..."
 				onChange={(value) => updateField('unitId', value)}
 			/>
@@ -211,6 +220,31 @@
 	.remove-button:focus-visible {
 		outline: 2px solid var(--color-olive);
 		outline-offset: 2px;
+	}
+
+	.ingredient-actions {
+		display: flex;
+		align-items: center;
+		gap: var(--space-3);
+	}
+
+	.optional-label {
+		display: inline-flex;
+		flex-direction: row;
+		align-items: center;
+		gap: var(--space-2);
+		font-weight: 400;
+		cursor: pointer;
+	}
+
+	.optional-label input {
+		width: 18px;
+		height: 18px;
+		min-height: 0;
+		padding: 0;
+		margin: 0;
+		accent-color: var(--color-burgundy);
+		cursor: pointer;
 	}
 
 	@media (min-width: 850px) {
